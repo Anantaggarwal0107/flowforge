@@ -1,0 +1,11 @@
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/**/*.pyc
+backend/flowforge.db
+backend/.env
+frontend/.env.local
+frontend/node_modules/
+frontend/.next/
+.env
