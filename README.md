@@ -1,41 +1,32 @@
 # FlowForge
 
-A visual AI pipeline builder. Drag nodes onto a canvas, wire them together, configure each, save your pipeline, and watch it execute node-by-node with live status updates streamed back via SSE.
+Visual AI pipeline orchestrator — build, validate, and run multi-step AI workflows by connecting nodes on a drag-and-drop canvas.
 
-## Features
+## What it does
 
-- 6 node types: Trigger, LLM Transform (Groq), Filter, HTTP Request, Data Transform, Webhook Output
-- ReactFlow drag-and-drop canvas with dark theme
-- Right-panel node configuration forms
-- Topological execution order with cycle detection
-- Live SSE streaming — nodes animate yellow (running) → green (done) or red (error)
-- Execution log drawer with per-node output and timing
-- Named pipelines saved to SQLite, loadable from toolbar dropdown
+FlowForge lets you wire together AI pipeline steps visually. Drag nodes onto a ReactFlow canvas, connect them into a graph, and hit Run. The backend validates the DAG (detecting cycles before execution starts), then streams live status updates back as each node executes — yellow for running, green for success, red for error.
 
-## Quickstart
+## Tech Stack
+
+- **Frontend**: Next.js 14, React 19, TypeScript, ReactFlow, Tailwind CSS, shadcn/ui
+- **Backend**: FastAPI, Python, SQLModel, SQLite
+- **AI**: Groq SDK (llama-3.1-8b-instant)
+- **Streaming**: Server-Sent Events (SSE)
+- **Infrastructure**: Docker Compose
+
+## Key Technical Features
+
+- **Topological sort (Kahn's algorithm)** — validates DAG structure and detects circular dependencies before any node runs
+- **SSE-driven live execution** — FastAPI streams `node_start`, `node_done`, `node_error` events; frontend animates node state in real time with per-node timing
+- **6 specialized node executors** — Trigger, Filter, LLM (Groq), HTTP Request (async httpx), Data Transform (Jinja2 templates), Webhook output
+- **Template substitution** — `{{field}}` syntax in prompts and URLs resolved at runtime from upstream node output
+- **Persistent pipelines** — saved to SQLite, reloadable across sessions
+
+## Running locally
 
 ```bash
-cp .env.example .env
-# Add your GROQ_API_KEY to .env
 docker compose up --build
 ```
 
-Open http://localhost:3000
-
-## 2-Minute Demo
-
-1. Drag a **Trigger** node → payload: `{"name": "FlowForge", "score": 0.9}`
-2. Drag a **Filter** node → expression: `data['score'] > 0.5`
-3. Drag an **LLM Transform** → user prompt: `Write a welcome message for {{name}}`
-4. Drag a **Webhook Output** → paste a URL from webhook.site
-5. Connect: Trigger → Filter → LLM → Webhook
-6. Click Save, then Run
-7. Watch nodes animate yellow → green
-8. Open Execution Log to see the LLM response
-9. Check webhook.site — AI output landed there
-
-## Stack
-
-- Next.js 14, TypeScript, ReactFlow (@xyflow/react), shadcn/ui, Tailwind
-- Python FastAPI, SQLModel, SQLite, Groq SDK, httpx
-- Docker Compose
+Frontend: http://localhost:3000  
+Backend: http://localhost:8000
