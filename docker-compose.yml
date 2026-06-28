@@ -7,9 +7,7 @@ services:
       - "8000:8000"
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
-      - DATABASE_URL=sqlite:////app/data/flowforge.db
-    volumes:
-      - backend_data:/app/data
+      - DATABASE_URL=${DATABASE_URL}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
@@ -28,5 +26,3 @@ services:
       backend:
         condition: service_healthy
 
-volumes:
-  backend_data:
