@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { nodeTypes } from "@/lib/nodeTypes";
 import type { PipelineNodeData, NodeExecution, ExecutionStatus, SSEEvent } from "@/lib/types";
 import { createPipeline, updatePipeline, getPipeline, runPipeline } from "@/lib/api";
+import type { PipelineTemplate } from "@/lib/examples";
 
 import { Palette } from "@/components/Palette";
 import { NodeConfigPanel } from "@/components/config/NodeConfigPanel";
@@ -160,6 +161,15 @@ export default function FlowForgePage() {
     setSelectedNode(null);
   }, [setNodes, setEdges]);
 
+  const handleLoadExample = useCallback((template: PipelineTemplate) => {
+    setNodes(template.nodes);
+    setEdges(template.edges);
+    setPipelineId(null);
+    setPipelineName(template.name);
+    setExecutions(new Map());
+    setSelectedNode(null);
+  }, [setNodes, setEdges]);
+
   const handleSSEEvent = useCallback((event: SSEEvent) => {
     setExecutions((prev) => {
       const next = new Map(prev);
@@ -209,12 +219,36 @@ export default function FlowForgePage() {
         onRun={handleRun}
         onNew={handleNew}
         onLoad={handleLoad}
+        onLoadExample={handleLoadExample}
         executionStatus={executionStatus}
         isSaving={isSaving}
       />
       <div className="flex flex-1 overflow-hidden">
         <Palette />
         <div ref={reactFlowWrapper} className="flex-1 relative" onDrop={onDrop} onDragOver={onDragOver}>
+          {nodes.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <div className="bg-neutral-900/80 border border-white/10 rounded-2xl px-10 py-8 max-w-sm w-full shadow-xl">
+                <h2 className="text-base font-semibold text-white/80 mb-5 text-center">Build your first pipeline</h2>
+                <ol className="flex flex-col gap-3">
+                  {[
+                    <>Drag a <span className="font-semibold text-white/90">Trigger</span> node from the left panel</>,
+                    <>Add processing nodes <span className="text-white/60">(LLM, Filter, HTTP…)</span></>,
+                    <>Connect nodes by dragging from one handle to another</>,
+                    <>Click <span className="font-semibold text-indigo-400">Run</span> to execute</>,
+                  ].map((step, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 text-white/40 text-[10px] font-bold flex items-center justify-center mt-0.5">
+                        {i + 1}
+                      </span>
+                      <span className="text-xs text-white/50 leading-relaxed">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-5 text-[10px] text-white/25 text-center">Or load an example from the toolbar above</p>
+              </div>
+            </div>
+          )}
           <ReactFlow
             nodes={nodesWithExecution}
             edges={edges}

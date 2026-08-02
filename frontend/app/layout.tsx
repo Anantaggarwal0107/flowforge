@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FlowForge",
-  description: "Visual AI Pipeline Builder",
+  title: "FlowForge — Visual AI Pipeline Builder",
+  description: "Build, connect, and run AI pipelines visually. Chain LLM transforms, HTTP requests, filters, and webhooks without writing glue code.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

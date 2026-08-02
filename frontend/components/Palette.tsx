@@ -18,7 +18,10 @@ export function Palette() {
 
   return (
     <aside className="w-56 flex-shrink-0 bg-black/40 border-r border-white/10 flex flex-col gap-1 p-3 overflow-y-auto">
-      <p className="text-[10px] uppercase tracking-widest text-white/30 mb-2 px-1">Nodes</p>
+      <div className="mb-3 px-1">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-white/50">Nodes</p>
+        <p className="text-[10px] text-white/25 mt-0.5">Drag to canvas →</p>
+      </div>
       {NODE_TYPES.map((n) => (
         <div
           key={n.type}
