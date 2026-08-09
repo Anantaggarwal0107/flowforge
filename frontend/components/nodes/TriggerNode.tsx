@@ -5,12 +5,11 @@ import { BaseNode } from "./BaseNode";
 import type { PipelineNodeData } from "@/lib/types";
 
 export function TriggerNode(props: NodeProps<Node<PipelineNodeData>>) {
-  const hasPayload = Boolean(props.data.config?.payload);
+  const payload = props.data.config?.payload ?? "{}";
+  const summary = payload.length > 2 ? "payload configured" : "POST /trigger";
   return (
-    <BaseNode {...props} icon={<Play size={14} />}>
-      <p className="text-[10px] text-white/40">
-        {hasPayload ? "Payload set" : "No payload"}
-      </p>
+    <BaseNode {...props} icon={<Play size={14} fill="currentColor" />}>
+      {summary}
     </BaseNode>
   );
 }

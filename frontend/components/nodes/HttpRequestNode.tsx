@@ -7,11 +7,11 @@ import type { PipelineNodeData } from "@/lib/types";
 export function HttpRequestNode(props: NodeProps<Node<PipelineNodeData>>) {
   const method = props.data.config?.method ?? "GET";
   const url = props.data.config?.url ?? "";
+  const host = url ? url.replace(/^https?:\/\//, "").split("/")[0] : "no url";
+  const summary = `${method} ${host}`;
   return (
     <BaseNode {...props} icon={<Globe size={14} />}>
-      <p className="text-[10px] text-white/40 font-mono truncate max-w-[160px]">
-        {method} {url.slice(0, 30)}{url.length > 30 ? "…" : ""}
-      </p>
+      {summary.length > 28 ? summary.slice(0, 28) + "…" : summary}
     </BaseNode>
   );
 }

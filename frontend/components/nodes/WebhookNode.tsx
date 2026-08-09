@@ -6,11 +6,12 @@ import type { PipelineNodeData } from "@/lib/types";
 
 export function WebhookNode(props: NodeProps<Node<PipelineNodeData>>) {
   const url = props.data.config?.url ?? "";
+  const summary = url
+    ? url.replace(/^https?:\/\//, "").split("?")[0].slice(0, 28) + (url.length > 28 ? "…" : "")
+    : "no url set";
   return (
     <BaseNode {...props} icon={<Webhook size={14} />}>
-      <p className="text-[10px] text-white/40 truncate max-w-[160px]">
-        {url ? url.slice(0, 30) + (url.length > 30 ? "…" : "") : "No URL set"}
-      </p>
+      {summary}
     </BaseNode>
   );
 }

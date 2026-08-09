@@ -5,12 +5,19 @@ import { BaseNode } from "./BaseNode";
 import type { PipelineNodeData } from "@/lib/types";
 
 export function DataTransformNode(props: NodeProps<Node<PipelineNodeData>>) {
-  const hasTemplate = Boolean(props.data.config?.template);
+  const template = props.data.config?.template ?? "{}";
+  const keys = (() => {
+    try {
+      const obj = JSON.parse(template);
+      const k = Object.keys(obj).length;
+      return k > 0 ? `${k} key${k > 1 ? "s" : ""} mapped` : "template configured";
+    } catch {
+      return "template configured";
+    }
+  })();
   return (
     <BaseNode {...props} icon={<Shuffle size={14} />}>
-      <p className="text-[10px] text-white/40">
-        {hasTemplate ? "Template configured" : "No template"}
-      </p>
+      {keys}
     </BaseNode>
   );
 }

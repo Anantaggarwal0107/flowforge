@@ -27,21 +27,21 @@ import { ExecutionLog } from "@/components/ExecutionLog";
 import { PipelineToolbar } from "@/components/PipelineToolbar";
 
 const DEFAULT_NODE_CONFIGS: Record<string, Record<string, string>> = {
-  trigger: { payload: "{}" },
-  llm: { system_prompt: "You are a helpful assistant.", user_prompt: "{{input}}" },
-  filter: { expression: "True" },
+  trigger:     { payload: "{}" },
+  llm:         { system_prompt: "You are a helpful assistant.", user_prompt: "{{input}}" },
+  filter:      { expression: "True" },
   httpRequest: { method: "GET", url: "", headers: "{}", body: "" },
-  transform: { template: "{}" },
-  webhook: { url: "" },
+  transform:   { template: "{}" },
+  webhook:     { url: "" },
 };
 
 const DEFAULT_LABELS: Record<string, string> = {
-  trigger: "Trigger",
-  llm: "LLM Transform",
-  filter: "Filter",
+  trigger:     "Trigger",
+  llm:         "LLM Transform",
+  filter:      "Filter",
   httpRequest: "HTTP Request",
-  transform: "Data Transform",
-  webhook: "Webhook Output",
+  transform:   "Data Transform",
+  webhook:     "Webhook Output",
 };
 
 export default function FlowForgePage() {
@@ -211,7 +211,7 @@ export default function FlowForgePage() {
   }, [pipelineId, handleSSEEvent]);
 
   return (
-    <div className="flex flex-col h-screen bg-neutral-950">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <PipelineToolbar
         pipelineName={pipelineName}
         onNameChange={setPipelineName}
@@ -222,30 +222,38 @@ export default function FlowForgePage() {
         onLoadExample={handleLoadExample}
         executionStatus={executionStatus}
         isSaving={isSaving}
+        executions={executions}
       />
-      <div className="flex flex-1 overflow-hidden">
-        <Palette />
-        <div ref={reactFlowWrapper} className="flex-1 relative" onDrop={onDrop} onDragOver={onDragOver}>
+      <div className="flex flex-1 min-h-0">
+        <Palette nodes={nodes} edges={edges} />
+        <div ref={reactFlowWrapper} className="flex-1 relative min-w-0" onDrop={onDrop} onDragOver={onDragOver}>
           {nodes.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-              <div className="bg-neutral-900/80 border border-white/10 rounded-2xl px-10 py-8 max-w-sm w-full shadow-xl">
-                <h2 className="text-base font-semibold text-white/80 mb-5 text-center">Build your first pipeline</h2>
+              <div
+                className="rounded-2xl border border-border px-10 py-8 max-w-sm w-full"
+                style={{ background: "var(--card)", opacity: 0.8, boxShadow: "var(--shadow-panel)" }}
+              >
+                <h2 className="text-base font-semibold mb-5 text-center text-foreground">Build your first pipeline</h2>
                 <ol className="flex flex-col gap-3">
                   {[
-                    <>Drag a <span className="font-semibold text-white/90">Trigger</span> node from the left panel</>,
-                    <>Add processing nodes <span className="text-white/60">(LLM, Filter, HTTP…)</span></>,
+                    <>Drag a <span className="font-semibold">Trigger</span> node from the left panel</>,
+                    <>Add processing nodes <span className="text-muted-foreground">(LLM, Filter, HTTP…)</span></>,
                     <>Connect nodes by dragging from one handle to another</>,
-                    <>Click <span className="font-semibold text-indigo-400">Run</span> to execute</>,
+                    <>Click <span className="font-semibold" style={{ color: "var(--primary)" }}>Run</span> to execute</>,
                   ].map((step, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 text-white/40 text-[10px] font-bold flex items-center justify-center mt-0.5">
+                      <span
+                        className="flex-shrink-0 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center mt-0.5 bg-accent text-muted-foreground"
+                      >
                         {i + 1}
                       </span>
-                      <span className="text-xs text-white/50 leading-relaxed">{step}</span>
+                      <span className="text-xs text-muted-foreground leading-relaxed">{step}</span>
                     </li>
                   ))}
                 </ol>
-                <p className="mt-5 text-[10px] text-white/25 text-center">Or load an example from the toolbar above</p>
+                <p className="mt-5 text-[10px] text-center" style={{ color: "var(--faint)" }}>
+                  Or load an example from the toolbar above
+                </p>
               </div>
             </div>
           )}
@@ -261,12 +269,16 @@ export default function FlowForgePage() {
             nodeTypes={nodeTypes}
             fitView
           >
-            <Background color="#1a1a1a" gap={24} />
+            <Background gap={22} />
             <Controls />
-            <MiniMap nodeColor="#333" maskColor="rgba(0,0,0,0.6)" />
+            <MiniMap nodeColor="var(--card)" maskColor="rgba(8,9,12,0.6)" />
           </ReactFlow>
         </div>
-        <NodeConfigPanel node={selectedNode} onUpdateConfig={handleUpdateConfig} />
+        <NodeConfigPanel
+          node={selectedNode}
+          onUpdateConfig={handleUpdateConfig}
+          executions={executions}
+        />
       </div>
       <ExecutionLog executions={Array.from(executions.values())} />
     </div>

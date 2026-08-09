@@ -6,9 +6,10 @@ import type { PipelineNodeData } from "@/lib/types";
 
 export function FilterNode(props: NodeProps<Node<PipelineNodeData>>) {
   const expr = props.data.config?.expression ?? "True";
+  const summary = expr.length > 28 ? expr.slice(0, 28) + "…" : expr;
   return (
     <BaseNode {...props} icon={<Filter size={14} />}>
-      <p className="text-[10px] text-white/40 font-mono truncate max-w-[160px]">{expr}</p>
+      {summary}
     </BaseNode>
   );
 }
